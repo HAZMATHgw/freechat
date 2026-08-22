@@ -25,11 +25,18 @@ jobs:
           node-version: 20
           cache: npm
 
+      # 모바일에서 폴더째로 올리기 어려워, src/public/supabase 폴더는
+      # app-files.zip 하나로 저장소 루트에 올려두고 여기서 풀어준다.
+      - name: 폴더 구조 복원 (app-files.zip 압축 해제)
+        run: |
+          if [ -f app-files.zip ]; then
+            unzip -o app-files.zip -d .
+          fi
+
       - run: npm ci
 
       - run: npm run build
         env:
-          # 저장소 Settings > Secrets and variables > Actions 에 등록한 값을 빌드 시점에 넣는다.
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
           VITE_SUPABASE_BUCKET: attachments
